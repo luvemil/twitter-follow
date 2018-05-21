@@ -1,8 +1,8 @@
 import pickle
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(dotenv_path=".env")
 
-from tweepy import OAuthHandler
+from tweepy.auth import OAuthHandler
 
 import os
 auth = OAuthHandler(os.getenv("CONSUMER_KEY"),os.getenv("CONSUMER_SECRET"))
@@ -19,7 +19,7 @@ def get_api_token(auth):
         return None
 
     print("Visit {} and write here the code".format(redirect_url))
-    verifier = raw_input('Verifier:')
+    verifier = input('Verifier:')
 
     try:
         auth.get_access_token(verifier)
@@ -31,14 +31,14 @@ def get_api_token(auth):
             "secret": auth.access_token_secret,
             "status": "OK"
             }
-    token_file = open("token.pickle","w")
+    token_file = open("token.pickle","wb")
     pickle.dump(access_data,token_file)
     token_file.close()
     return auth
 
 def setup_api(auth):
     try:
-        token_file = open("token.pickle","r")
+        token_file = open("token.pickle","rb")
         access_data = pickle.load(token_file)
         token_file.close()
         if access_data["status"] != "OK":
