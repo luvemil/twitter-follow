@@ -8,4 +8,10 @@ api = setup_api(auth)
 myStreamListener = MyStreamListener()
 myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
 
-myStream.filter(track=['juventus'])
+try:
+    myStream.filter(track=['juventus'])
+except KeyboardInterrupt:
+    print("Received interrupt, shutting down...")
+finally:
+    myStream.disconnect()
+    print("Stream closed. Goodbye!")
