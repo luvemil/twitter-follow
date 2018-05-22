@@ -4,6 +4,10 @@ from setup import auth,setup_api
 from handlers import MyStreamListener
 from tbot import bot, updater, groups
 
+import os
+
+target_id = os.getenv("DEFAULT_TWITTER_TARGET")
+
 import logging
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.DEBUG)
@@ -19,7 +23,7 @@ myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
 
 try:
     updater.start_polling()
-    myStream.filter(track=['juventus'])
+    myStream.filter(follow=[target_id])
 except KeyboardInterrupt:
     print("Received interrupt, shutting down...")
 finally:
