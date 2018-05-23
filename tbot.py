@@ -7,7 +7,12 @@ debug_flag = os.getenv("DEBUG")
 import logging
 
 # Ensure dotenv was loaded
-bot = telegram.Bot(token=os.getenv("TELEGRAM_BOT_TOKEN"))
+test_flag = os.getenv("USE_TEST_BOT")
+if test_flag == "true":
+    telegram_token = os.getenv("TELEGRAM_TEST_BOT_TOKEN")
+else:
+    telegram_token = os.getenv("TELEGRAM_BOT_TOKEN")
+bot = telegram.Bot(token=telegram_token)
 updater = Updater(bot=bot)
 
 groups = []

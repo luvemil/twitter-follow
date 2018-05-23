@@ -36,19 +36,21 @@ def get_api_token(auth):
     token_file.close()
     return auth
 
-def setup_api(auth):
-    try:
-        token_file = open("token.pickle","rb")
-        access_data = pickle.load(token_file)
-        token_file.close()
-        if access_data["status"] != "OK":
-            raise ValueError("Status is not OK")
-        auth.set_access_token(access_data["key"],access_data["secret"])
-    except ValueError:
-        token_file.close()
-        auth = get_api_token(auth)
-    except FileNotFoundError:
-        auth = get_api_token(auth)
-
+def setup_api(auth, use_env=True):
+    if use_env:
+        auth.set_access_token(os.getenv("ACCESS_TOKEN"),os.getenv("ACCESS_TOKEN_SECRET"))
+    else:
+        try:
+            token_file = open("token.pickle","rb")
+            access_data = pickle.load(token_file)
+            token_file.close()
+            if access_data["status"] != "OK":
+                raise ValueError("Status is not OK")
+            auth.set_access_token(access_data["key"],access_data["secret"])
+        except ValueError:
+            token_file.close()
+            auth = get_api_token(auth)
+        except FileNotFoundError:
+            auth = get_api_token(auth)
     api = tweepy.API(auth)
     return api
