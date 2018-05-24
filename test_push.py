@@ -21,7 +21,7 @@ sender_id = '52424550' # Il fatto quotidiano
 msgs = []
 
 def push_tweet(status):
-    if status.author.id == sender_id:
+    if status.author.id_str == sender_id:
         p_status = default_parse_status(status)
         msg = "*{} @ {}*: {}".format(
                 p_status['author'],
@@ -40,7 +40,9 @@ def push_tweet(status):
                     parse_mode=telegram.ParseMode.MARKDOWN
                     )
         except telegram.error.BadRequest:
-            logging.info("Error sending message: {}".format(msg))
+            logging.info("BadRequest caught sending message: {}".format(msg))
+        except telegram.error.TimedOut:
+            logging.info("TimeOut caught sending message: {}".format(msg))
 
 myStreamListener = CallbackStreamListener(callback=push_tweet)
 myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
