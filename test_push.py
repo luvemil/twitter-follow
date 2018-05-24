@@ -1,8 +1,9 @@
 import tweepy
 
 from setup import auth,setup_api
-from handlers import MyStreamListener
+from handlers import *
 from tbot import bot, updater, groups
+from tools import format_status
 
 import os
 
@@ -12,16 +13,22 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 api = setup_api(auth)
 
-def push_tweet(msg):
+sender_id = '52424550' # Il fatto quotidiano
+
+def push_tweet(status):
+    if status.author.id == sender_id:
+        msg = "! " + format_status(status)
+    else:
+        msg = format_status(status)
     for gid in groups:
         bot.send_message(chat_id=gid,text=msg)
 
-myStreamListener = MyStreamListener(callback=push_tweet)
+myStreamListener = CallbackStreamListener(callback=push_tweet)
 myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
 
 try:
     updater.start_polling()
-    myStream.filter(track=['juventus'])
+    myStream.filter(follow=[sender_id])
 except KeyboardInterrupt:
     print("Received interrupt, shutting down...")
 finally:

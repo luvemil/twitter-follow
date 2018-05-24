@@ -6,7 +6,9 @@ debug_flag = os.getenv("DEBUG")
 
 import logging
 
-# Ensure dotenv was loaded
+# TODO:
+#   - ensure dotenv was loaded
+#   - move the logic to decide whether to use the test bot or not to the calling app
 test_flag = os.getenv("USE_TEST_BOT")
 if test_flag == "true":
     telegram_token = os.getenv("TELEGRAM_TEST_BOT_TOKEN")
