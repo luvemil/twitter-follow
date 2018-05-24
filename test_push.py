@@ -8,6 +8,7 @@ import telegram
 import pickle
 import codecs
 from callbacks import *
+from debugger import debugger
 
 import os
 
@@ -38,5 +39,6 @@ finally:
     for msg in msgs:
         outfile.write(msg+"\n")
     outfile.close()
+    debugger.save("bad_tweets","bad_tweets.pickle")
     print("Tweets, written")
     print("Stream closed. Goodbye!")

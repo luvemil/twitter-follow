@@ -1,6 +1,8 @@
 import telegram
 import logging
 from tools import default_parse_status, format_status
+import time
+from debugger import record
 
 def send_with_retry(bot,chat_id,msg,trynum=1,maxretry=5):
     try:
@@ -12,10 +14,12 @@ def send_with_retry(bot,chat_id,msg,trynum=1,maxretry=5):
     except telegram.error.BadRequest:
         # TODO: Try resending BadRequests
         logging.info("BadRequest caught at try {} sending message: {}".format(trynum,msg))
-        if trynum <= maxretry:
+        if trynum < maxretry:
+            time.sleep(2)
             send_with_retry(bot,chat_id,msg,trynum+1,maxretry)
         else:
             logging.info("BadRequest exceeds maxretry for message: {}".format(msg))
+            record(bad_tweets=msg)
     except telegram.error.TimedOut:
         # NOTE: When a TimeOut occurs, apparently the message gets sent anyway
         logging.info("TimeOut caught sending message: {}".format(msg))
