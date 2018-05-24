@@ -7,6 +7,7 @@ from tools import *
 import telegram
 import pickle
 import codecs
+from callbacks import *
 
 import os
 
@@ -20,30 +21,7 @@ sender_id = '52424550' # Il fatto quotidiano
 
 msgs = []
 
-def push_tweet(status):
-    if status.author.id_str == sender_id:
-        p_status = default_parse_status(status)
-        msg = "*{} @ {}*: {}".format(
-                p_status['author'],
-                p_status['date'],
-                p_status['content']
-                )
-    else:
-        msg = format_status(status)
-
-    msgs.append(msg)
-    for gid in groups:
-        try:
-            bot.send_message(
-                    chat_id=gid,
-                    text=msg,
-                    parse_mode=telegram.ParseMode.MARKDOWN
-                    )
-        except telegram.error.BadRequest:
-            logging.info("BadRequest caught sending message: {}".format(msg))
-        except telegram.error.TimedOut:
-            logging.info("TimeOut caught sending message: {}".format(msg))
-
+push_tweet = make_push_tweet(bot,sender_id,groups,msgs)
 myStreamListener = CallbackStreamListener(callback=push_tweet)
 myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
 
