@@ -13,3 +13,10 @@ def format_status(status):
     content = status.text
     date = status.created_at.strftime("%Y-%m-%d %H:%M:%S")
     return "{} @ {}: {}".format(author_name,date,content)
+
+def default_parse_status(status):
+    return {
+            "author": status.author.screen_name,
+            "content": status.text,
+            "date": status.created_at.strftime("%Y-%m-%d %H:%M:%S")
+            }
