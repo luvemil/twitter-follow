@@ -19,14 +19,20 @@ else:
 bot = telegram.Bot(token=telegram_token)
 updater = Updater(bot=bot)
 
-#TODO: Add code to retrieve groups from redis
 r = redis.StrictRedis(host='redis',charset="utf-8",decode_responses=True)
 groups = r.lrange('groups',0,-1)
 
 def _add_group(gid):
-    #TODO: Add code to store this information in redis
+    gid = str(gid)
     groups.append(gid)
     r.rpush('groups',gid)
+
+def _is_registered(gid):
+    gid = str(gid)
+    if gid in groups:
+        return True
+    else:
+        return False
 
 def _delete_group(gid):
     try:
@@ -40,7 +46,7 @@ def _delete_group(gid):
 def register_group(bot,update):
     try:
         gid = update.message.chat.id
-        if gid in groups:
+        if _is_registered(gid):
             update.message.reply_text("Already registered")
         else:
             _add_group(gid)
