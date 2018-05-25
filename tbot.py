@@ -2,6 +2,8 @@ import telegram
 from telegram.ext import Updater, CommandHandler
 import os
 
+import redis
+
 debug_flag = os.getenv("DEBUG")
 
 import logging
@@ -17,14 +19,31 @@ else:
 bot = telegram.Bot(token=telegram_token)
 updater = Updater(bot=bot)
 
-groups = []
+#TODO: Add code to retrieve groups from redis
+r = redis.StrictRedis(host='redis')
+groups = r.lrange('groups',0,-1)
+
+def _add_group(gid):
+    #TODO: Add code to store this information in redis
+    groups.append(gid)
+    r.rpush('groups',gid)
+
+def _delete_group(gid):
+    try:
+        if gid in groups:
+            groups.remove(gid)
+            return True
+    except:
+        logging.debug("Error removing group from list")
+        return False
+
 def register_group(bot,update):
     try:
         gid = update.message.chat.id
         if gid in groups:
             update.message.reply_text("Already registered")
         else:
-            groups.append(update.message.chat.id)
+            _add_group(gid)
             update.message.reply_text("You have been registered and will receive updates")
         logging.debug("groups listing START")
         for gid in groups:
@@ -34,12 +53,11 @@ def register_group(bot,update):
         update.message.reply_text("Something went wrong")
 
 def delete_group(bot,update):
-    try:
-        gid = update.message.chat.id
-        if gid in groups:
-            groups.remove(gid)
-    except:
-        logging.debug("Error removing group from list")
+    gid = update.message.chat.id
+    if _delete_group(gid):
+        update.message.reply_text("Unsubscribed")
+    else:
+        update.message.reply_text("Something went wrong")
 
 def debug_echo_groups(bot,update):
     logging.debug("len(groups): {}".format(len(groups)))
@@ -49,6 +67,7 @@ def debug_echo_groups(bot,update):
         update.message.reply_text("groups is empty")
 
 updater.dispatcher.add_handler(CommandHandler('register',register_group))
+updater.dispatcher.add_handler(CommandHandler('cancel',delete_group))
 
 if debug_flag == "true":
     updater.dispatcher.add_handler(CommandHandler('debug_echo_groups',debug_echo_groups))
