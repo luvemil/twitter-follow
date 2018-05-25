@@ -35,9 +35,12 @@ def _is_registered(gid):
         return False
 
 def _delete_group(gid):
+    #FIXME: this function does not work
     try:
-        if gid in groups:
+        if _is_registered(gid):
+            gid = str(gid)
             groups.remove(gid)
+            r.lrem('groups',0,gid)
             return True
     except:
         logging.debug("Error removing group from list")
