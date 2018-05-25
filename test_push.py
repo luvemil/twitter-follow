@@ -25,7 +25,7 @@ sender_id = '52424550' # Il fatto quotidiano
 
 msgs = []
 
-push_tweet = make_push_tweet(bot,sender_id,groups,msgs)
+push_tweet = make_push_tweet(bot,sender_id,groups,msgs,5)
 myStreamListener = CallbackStreamListener(callback=push_tweet)
 myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
 

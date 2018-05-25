@@ -24,7 +24,7 @@ def send_with_retry(bot,chat_id,msg,trynum=1,maxretry=5):
         # NOTE: When a TimeOut occurs, apparently the message gets sent anyway
         logging.info("TimeOut caught sending message: {}".format(msg))
 
-def make_push_tweet(bot,author_id_str,targets,msg_q=None):
+def make_push_tweet(bot,author_id_str,targets,msg_q=None,bad_request_retries=1):
     sender_id = str(author_id_str)
 
     def push_tweet(status):
@@ -45,7 +45,7 @@ def make_push_tweet(bot,author_id_str,targets,msg_q=None):
         if msg_q is not None:
             msg_q.append(msg)
         for gid in targets:
-            send_with_retry(bot,gid,msg)
+            send_with_retry(bot,gid,msg,bad_request_retries)
 
     return push_tweet
 
