@@ -10,6 +10,9 @@ import codecs
 from callbacks import *
 from debugger import debugger
 
+# Setup debugging
+debugger.set_debugging()
+
 import os
 
 import logging
