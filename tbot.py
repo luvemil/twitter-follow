@@ -20,7 +20,7 @@ bot = telegram.Bot(token=telegram_token)
 updater = Updater(bot=bot)
 
 #TODO: Add code to retrieve groups from redis
-r = redis.StrictRedis(host='redis')
+r = redis.StrictRedis(host='redis',charset="utf-8",decode_responses=True)
 groups = r.lrange('groups',0,-1)
 
 def _add_group(gid):
