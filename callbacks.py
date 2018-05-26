@@ -45,7 +45,7 @@ def make_push_tweet(bot,author_id_str,targets,msg_q=None,bad_request_retries=1):
         if msg_q is not None:
             msg_q.append(msg)
         for gid in targets:
-            send_with_retry(bot,gid,msg,bad_request_retries)
+            send_with_retry(bot,gid,msg,maxretry=bad_request_retries)
 
     return push_tweet
 
